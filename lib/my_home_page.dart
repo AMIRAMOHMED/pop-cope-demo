@@ -31,6 +31,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(title: Text("Pop Scope Demo")), 
       body: _screens[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.purple,
+        selectedItemColor: Colors.purple,
+        unselectedItemColor: Colors.black,
+
         currentIndex: selectedIndex,
         onTap: _onItemTapped,
         items: [
