@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -27,23 +30,47 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Pop Scope Demo")), 
-      body: _screens[selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.purple,
-        selectedItemColor: Colors.purple,
-        unselectedItemColor: Colors.black,
+    return PopScope(
+      canPop: false, 
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return; 
 
-        currentIndex: selectedIndex,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "home"),
-          BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: "rides"),
-          BottomNavigationBarItem(icon: Icon(Icons.groups), label: "communities"),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: "messages"),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: "notifications"),
-        ],
+        if (selectedIndex == 0) {
+          DateTime now = DateTime.now();
+          if (lastPressed == null || now.difference(lastPressed!) > Duration(seconds: 2)) {
+            lastPressed = now;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Press back again to exit")),
+            );
+          } else {
+            if (Platform.isAndroid) {
+              SystemNavigator.pop(); 
+            }
+          }
+        } else {
+          setState(() {
+            selectedIndex = 0; 
+          });
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text("Pop Scope Demo")), 
+        body: _screens[selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.purple,
+          selectedItemColor: Colors.purple,
+          unselectedItemColor: Colors.black,
+      
+          currentIndex: selectedIndex,
+          onTap: _onItemTapped,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "home"),
+            BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: "rides"),
+            BottomNavigationBarItem(icon: Icon(Icons.groups), label: "communities"),
+            BottomNavigationBarItem(icon: Icon(Icons.chat), label: "messages"),
+            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: "notifications"),
+          ],
+        ),
       ),
     );
   }
